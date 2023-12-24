@@ -1,5 +1,6 @@
 class Restaurant {
-  String? id, name, description, pictureId, city, rating;
+  String? id, name, description, pictureId, city;
+  double? rating;
   Menu? menus;
 
   Restaurant({
@@ -30,8 +31,20 @@ class Menu {
   Menu({this.foods, this.drinks});
 
   factory Menu.fromJson(Map<String, dynamic> json) => Menu(
-        foods: json["foods"],
-        drinks: json["drinks"],
+        foods: json["foods"] == null
+            ? []
+            : List<ItemMenu>.from(
+                (json["foods"] as List<dynamic>).map(
+                  (e) => ItemMenu.fromJson(e),
+                ),
+              ),
+        drinks: json["drinks"] == null
+            ? []
+            : List<ItemMenu>.from(
+                (json["drinks"] as List<dynamic>).map(
+                  (e) => ItemMenu.fromJson(e),
+                ),
+              ),
       );
 }
 

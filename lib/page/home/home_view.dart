@@ -18,6 +18,7 @@ class _HomeViewState extends State<HomeView> {
   bool isInitial = false;
   bool isGridView = false;
   bool isSearchShow = false;
+  bool isLoading = true;
   late TextEditingController controller;
   List<Restaurant> listData = [];
   List<Restaurant> listDataShow = [];
@@ -73,9 +74,13 @@ class _HomeViewState extends State<HomeView> {
             parsed['restaurants'].map((e) => Restaurant.fromJson(e)));
         listDataShow = List<Restaurant>.from(
             parsed['restaurants'].map((e) => Restaurant.fromJson(e)));
+        isLoading = false;
       });
     } catch (e) {
       log('error extract json: $e');
+      setState(() {
+        isLoading = false;
+      });
     }
   }
 
@@ -141,9 +146,13 @@ class _HomeViewState extends State<HomeView> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: _body(
-          isGridView,
-        ),
+        child: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : _body(
+                isGridView,
+              ),
       ),
     );
   }

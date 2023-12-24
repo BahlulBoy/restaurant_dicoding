@@ -155,9 +155,21 @@ class DetailRestaurantView extends StatelessWidget {
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
-                              return Text(
-                                '- ${data.menus?.foods?[index].name ?? ''}',
-                                style: Theme.of(context).textTheme.labelSmall,
+                              return Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  data.menus?.foods?[index].name ?? '',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall
+                                      ?.copyWith(
+                                        color: Colors.white,
+                                      ),
+                                ),
                               );
                             },
                             separatorBuilder: (context, index) =>
@@ -187,14 +199,26 @@ class DetailRestaurantView extends StatelessWidget {
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
-                              return Text(
-                                '- ${data.menus?.drinks?[index].name ?? ''}',
-                                style: Theme.of(context).textTheme.labelSmall,
+                              return Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  data.menus?.drinks?[index].name ?? '',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall
+                                      ?.copyWith(
+                                        color: Colors.white,
+                                      ),
+                                ),
                               );
                             },
                             separatorBuilder: (context, index) =>
                                 const SizedBox(height: 4),
-                            itemCount: data.menus?.foods?.length ?? 0,
+                            itemCount: data.menus?.drinks?.length ?? 0,
                           ),
                         ],
                       ),

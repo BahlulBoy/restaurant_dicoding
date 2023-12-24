@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:restaurant_dicoding/models/restaurant_model.dart';
@@ -62,16 +63,20 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> getDataFromJson() async {
-    String data = await DefaultAssetBundle.of(context).loadString(
-      'assets/json/local_restaurant.json',
-    );
-    final Map<String, dynamic> parsed = jsonDecode(data);
-    setState(() {
-      listData = List<Restaurant>.from(
-          parsed['restaurants'].map((e) => Restaurant.fromJson(e)));
-      listDataShow = List<Restaurant>.from(
-          parsed['restaurants'].map((e) => Restaurant.fromJson(e)));
-    });
+    try {
+      String data = await DefaultAssetBundle.of(context).loadString(
+        'assets/json/local_restaurant.json',
+      );
+      final Map<String, dynamic> parsed = jsonDecode(data);
+      setState(() {
+        listData = List<Restaurant>.from(
+            parsed['restaurants'].map((e) => Restaurant.fromJson(e)));
+        listDataShow = List<Restaurant>.from(
+            parsed['restaurants'].map((e) => Restaurant.fromJson(e)));
+      });
+    } catch (e) {
+      log('error extract json: $e');
+    }
   }
 
   @override

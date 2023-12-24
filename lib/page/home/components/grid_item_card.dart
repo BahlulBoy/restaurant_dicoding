@@ -21,9 +21,12 @@ class GridItemCard extends StatelessWidget {
               SizedBox(
                 height: 100,
                 width: double.infinity,
-                child: Image.network(
-                  data.pictureId ?? '/',
-                  fit: BoxFit.cover,
+                child: Hero(
+                  tag: data.pictureId ?? '',
+                  child: Image.network(
+                    data.pictureId ?? '/',
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Container(

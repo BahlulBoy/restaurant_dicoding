@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         textTheme: MyStyles.myTextTheme,
         useMaterial3: true,
       ),
-      initialRoute: MyPaths.home,
+      initialRoute: MyPaths.splash,
       routes: MyRoutes.myListRoutes(context),
       debugShowCheckedModeBanner: false,
     );

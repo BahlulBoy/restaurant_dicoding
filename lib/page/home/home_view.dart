@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:restaurant_dicoding/models/restaurant_model.dart';
+import 'package:restaurant_dicoding/navigation/my_paths.dart';
 import 'package:restaurant_dicoding/page/home/components/grid_item_card.dart';
 import 'package:restaurant_dicoding/page/home/components/list_item_card.dart';
 
@@ -180,7 +181,16 @@ class _HomeViewState extends State<HomeView> {
                 mainAxisSpacing: 4.0,
               ),
               delegate: SliverChildBuilderDelegate(
-                (context, index) => GridItemCard(data: listDataShow[index]),
+                (context, index) => InkWell(
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      MyPaths.detail,
+                      arguments: listDataShow[index],
+                    );
+                  },
+                  child: GridItemCard(data: listDataShow[index]),
+                ),
                 childCount: listDataShow.length,
               ),
             ),
@@ -189,8 +199,16 @@ class _HomeViewState extends State<HomeView> {
       );
     } else {
       return ListView.separated(
-        itemBuilder: (context, index) =>
-            ListItemCard(data: listDataShow[index]),
+        itemBuilder: (context, index) => InkWell(
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              MyPaths.detail,
+              arguments: listDataShow[index],
+            );
+          },
+          child: ListItemCard(data: listDataShow[index]),
+        ),
         separatorBuilder: (context, index) => const SizedBox(height: 5),
         padding: const EdgeInsets.only(
           top: 3,

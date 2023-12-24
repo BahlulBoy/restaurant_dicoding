@@ -25,9 +25,12 @@ class ListItemCard extends StatelessWidget {
             SizedBox(
               width: 110,
               height: 80,
-              child: Image.network(
-                data.pictureId ?? '/',
-                fit: BoxFit.cover,
+              child: Hero(
+                tag: data.pictureId ?? '',
+                child: Image.network(
+                  data.pictureId ?? '/',
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             Expanded(

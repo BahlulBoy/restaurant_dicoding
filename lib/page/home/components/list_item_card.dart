@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_dicoding/models/restaurant_model.dart';
+import 'package:restaurant_dicoding/constants/api_const.dart';
+import 'package:restaurant_dicoding/models/list_restaurant_model.dart';
 
 class ListItemCard extends StatelessWidget {
   const ListItemCard({
@@ -26,10 +27,22 @@ class ListItemCard extends StatelessWidget {
               width: 110,
               height: 80,
               child: Hero(
-                tag: data.pictureId ?? '',
+                tag: data.id ?? '',
                 child: Image.network(
-                  data.pictureId ?? '/',
+                  ApiConst.mediumPic(data.pictureId ?? ''),
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Image.asset(
+                    'assets/images/image_error.png',
+                    fit: BoxFit.cover,
+                  ),
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    );
+                  },
                 ),
               ),
             ),

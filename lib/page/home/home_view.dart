@@ -1,103 +1,42 @@
-import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:restaurant_dicoding/models/restaurant_model.dart';
+import 'package:provider/provider.dart';
+import 'package:restaurant_dicoding/models/list_restaurant_model.dart';
 import 'package:restaurant_dicoding/navigation/my_paths.dart';
 import 'package:restaurant_dicoding/page/home/components/grid_item_card.dart';
 import 'package:restaurant_dicoding/page/home/components/list_item_card.dart';
+import 'package:restaurant_dicoding/page/home/helpers/screen_state_condition.dart';
+import 'package:restaurant_dicoding/page/home/home_provider.dart';
 
-class HomeView extends StatefulWidget {
+class HomeView extends StatelessWidget {
   const HomeView({super.key});
 
   @override
-  State<HomeView> createState() => _HomeViewState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: HomeProvider.new,
+      builder: (context, child) => const _HomeView(),
+    );
+  }
 }
 
-class _HomeViewState extends State<HomeView> {
-  bool isInitial = false;
-  bool isGridView = false;
-  bool isSearchShow = false;
-  bool isLoading = true;
-  late TextEditingController controller;
-  List<Restaurant> listData = [];
-  List<Restaurant> listDataShow = [];
-
-  @override
-  void initState() {
-    super.initState();
-    getDataFromJson();
-    controller = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  void showSearch() {
-    setState(() {
-      isSearchShow = !isSearchShow;
-      if (!isSearchShow) {
-        listDataShow = listData;
-      } else {
-        listDataShow = [];
-      }
-    });
-    controller.clear();
-  }
-
-  void searchItem(String search) {
-    setState(() {
-      if (search.isEmpty) {
-        listDataShow = [];
-      } else {
-        listDataShow = listData
-            .where(
-              (element) =>
-                  element.name!.toLowerCase().contains(search.toLowerCase()),
-            )
-            .toList();
-      }
-    });
-  }
-
-  Future<void> getDataFromJson() async {
-    try {
-      String data = await DefaultAssetBundle.of(context).loadString(
-        'assets/json/local_restaurant.json',
-      );
-      final Map<String, dynamic> parsed = jsonDecode(data);
-      setState(() {
-        listData = List<Restaurant>.from(
-            parsed['restaurants'].map((e) => Restaurant.fromJson(e)));
-        listDataShow = List<Restaurant>.from(
-            parsed['restaurants'].map((e) => Restaurant.fromJson(e)));
-        isLoading = false;
-      });
-    } catch (e) {
-      log('error extract json: $e');
-      setState(() {
-        isLoading = false;
-      });
-    }
-  }
+class _HomeView extends StatelessWidget {
+  const _HomeView();
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<HomeProvider>().state;
+    final read = context.read<HomeProvider>();
     return Scaffold(
       appBar: AppBar(
         title: Row(
           children: [
             Expanded(
-              child: isSearchShow
+              child: state.isSearchShow
                   ? Padding(
                       padding: const EdgeInsets.only(
                         right: 8,
                       ),
                       child: TextFormField(
-                        controller: controller,
                         decoration: InputDecoration(
                           isCollapsed: true,
                           border: OutlineInputBorder(
@@ -110,34 +49,37 @@ class _HomeViewState extends State<HomeView> {
                             horizontal: 12,
                           ),
                         ),
-                        onChanged: (value) {
-                          searchItem(value);
+                        onChanged: (value) async {
+                          await read.getListRestaurantSearch(value);
                         },
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
                     )
-                  : _title(data: listDataShow),
+                  : _title(
+                      data: [],
+                      context: context,
+                    ),
             ),
             InkWell(
-              onTap: showSearch,
+              onTap: () {
+                read.showSearch();
+              },
               child: Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Icon(
-                  isSearchShow ? Icons.close : Icons.search,
+                  state.isSearchShow ? Icons.close : Icons.search,
                 ),
               ),
             ),
-            if (!isSearchShow)
+            if (!state.isSearchShow)
               InkWell(
                 onTap: () {
-                  setState(() {
-                    isGridView = !isGridView;
-                  });
+                  read.isGridChanger();
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(5.0),
                   child: Icon(
-                    isGridView ? Icons.grid_view_outlined : Icons.list_alt,
+                    state.isGrid ? Icons.grid_view_outlined : Icons.list_alt,
                   ),
                 ),
               ),
@@ -146,19 +88,58 @@ class _HomeViewState extends State<HomeView> {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: isLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : _body(
-                isGridView,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            if (state.screenState == ScreenStateCondition.success) ...[
+              if (state.isSearchShow)
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                  child: Text(
+                    'restaurant found ${state.listRestaurantShow.length}',
+                    style: Theme.of(context).textTheme.labelMedium,
+                  ),
+                ),
+              Expanded(
+                child: state.screenState == ScreenStateCondition.loading
+                    ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                    : _body(state.isGrid, state.listRestaurantShow),
               ),
+            ],
+            if (state.screenState == ScreenStateCondition.loading) ...[
+              const Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              ),
+            ],
+            if (state.screenState == ScreenStateCondition.error) ...[
+              Expanded(
+                child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Text(
+                      state.errorMessage ?? 'Unknow problem',
+                      style: Theme.of(context).textTheme.labelMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            ]
+          ],
+        ),
       ),
     );
   }
 
   Widget _title({
     required List<Restaurant> data,
+    required BuildContext context,
   }) =>
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,8 +163,8 @@ class _HomeViewState extends State<HomeView> {
         ],
       );
 
-  Widget _body(bool isGridView) {
-    if (isGridView) {
+  Widget _body(bool isGridView, List<Restaurant> data) {
+    if (isGridView && data.isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: CustomScrollView(
@@ -197,31 +178,29 @@ class _HomeViewState extends State<HomeView> {
               delegate: SliverChildBuilderDelegate(
                 (context, index) => InkWell(
                   onTap: () {
-                    Navigator.pushNamed(
-                      context,
-                      MyPaths.detail,
-                      arguments: listDataShow[index],
-                    );
+                    Navigator.pushNamed(context, MyPaths.detail, arguments: {
+                      'id': data[index].id,
+                      'pic': data[index].pictureId,
+                    });
                   },
-                  child: GridItemCard(data: listDataShow[index]),
+                  child: GridItemCard(data: data[index]),
                 ),
-                childCount: listDataShow.length,
+                childCount: data.length,
               ),
             ),
           ],
         ),
       );
-    } else {
+    } else if (!isGridView && data.isNotEmpty) {
       return ListView.separated(
         itemBuilder: (context, index) => InkWell(
           onTap: () {
-            Navigator.pushNamed(
-              context,
-              MyPaths.detail,
-              arguments: listDataShow[index],
-            );
+            Navigator.pushNamed(context, MyPaths.detail, arguments: {
+              'id': data[index].id,
+              'pic': data[index].pictureId,
+            });
           },
-          child: ListItemCard(data: listDataShow[index]),
+          child: ListItemCard(data: data[index]),
         ),
         separatorBuilder: (context, index) => const SizedBox(height: 5),
         padding: const EdgeInsets.only(
@@ -229,7 +208,11 @@ class _HomeViewState extends State<HomeView> {
           left: 8,
           right: 8,
         ),
-        itemCount: listDataShow.length,
+        itemCount: data.length,
+      );
+    } else {
+      return const Center(
+        child: Text('Data not found'),
       );
     }
   }

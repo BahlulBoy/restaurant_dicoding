@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:restaurant_dicoding/page/home/helpers/screen_state_condition.dart';
+import 'package:restaurant_dicoding/helpers/screen_state_condition.dart';
 import 'package:restaurant_dicoding/page/home/home_state.dart';
 import 'package:restaurant_dicoding/repositories/restaurant_repository.dart';
 

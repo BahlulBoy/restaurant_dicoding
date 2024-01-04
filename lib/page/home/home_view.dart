@@ -4,7 +4,7 @@ import 'package:restaurant_dicoding/models/list_restaurant_model.dart';
 import 'package:restaurant_dicoding/navigation/my_paths.dart';
 import 'package:restaurant_dicoding/page/home/components/grid_item_card.dart';
 import 'package:restaurant_dicoding/page/home/components/list_item_card.dart';
-import 'package:restaurant_dicoding/page/home/helpers/screen_state_condition.dart';
+import 'package:restaurant_dicoding/helpers/screen_state_condition.dart';
 import 'package:restaurant_dicoding/page/home/home_provider.dart';
 
 class HomeView extends StatelessWidget {

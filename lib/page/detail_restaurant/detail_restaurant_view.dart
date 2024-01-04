@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_dicoding/constants/api_const.dart';
+import 'package:restaurant_dicoding/page/detail_restaurant/components/bottomsheet_review.dart';
+import 'package:restaurant_dicoding/page/detail_restaurant/components/review_item.dart';
 import 'package:restaurant_dicoding/page/detail_restaurant/detail_restaurant_provider.dart';
-import 'package:restaurant_dicoding/page/home/helpers/screen_state_condition.dart';
+import 'package:restaurant_dicoding/helpers/screen_state_condition.dart';
 
 class DetailRestaurantView extends StatelessWidget {
   const DetailRestaurantView({super.key});
@@ -28,7 +30,7 @@ class _DetailRestaurantView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<DetailRestaurantProvider>().state;
-    // final String id = arguments['id'] as String;
+    final read = context.read<DetailRestaurantProvider>();
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: SafeArea(
@@ -101,7 +103,8 @@ class _DetailRestaurantView extends StatelessWidget {
                           width: double.infinity,
                           clipBehavior: Clip.none,
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            padding: const EdgeInsets.only(
+                                left: 15, right: 15, bottom: 15),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -284,6 +287,79 @@ class _DetailRestaurantView extends StatelessWidget {
                                         ),
                                   ),
                                 ),
+                                ListView.separated(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemBuilder: (context, index) {
+                                    final dataReview = state.review![index];
+                                    return ReviewItem(
+                                      name: dataReview.name ?? '',
+                                      date: dataReview.date ?? '',
+                                      review: dataReview.review ?? '',
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) =>
+                                      const SizedBox(height: 4),
+                                  itemCount: state.review?.length ?? 0,
+                                ),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 5),
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      showModalBottomSheet(
+                                        context: context,
+                                        builder: (_) =>
+                                            ListenableProvider.value(
+                                          value: Provider.of<
+                                                  DetailRestaurantProvider>(
+                                              context),
+                                          builder: (_, child) =>
+                                              const BottomsheetReview(),
+                                        ),
+                                        backgroundColor: Colors.transparent,
+                                        isScrollControlled: true,
+                                      ).then((value) async {
+                                        if (value is Map<String, dynamic>) {
+                                          read
+                                              .postReview(
+                                                value['name'],
+                                                value['review'],
+                                              )
+                                              .then(
+                                                (value) => read.showSnackbar(
+                                                  text: value['message'],
+                                                  context: context,
+                                                  isError: value['value'],
+                                                ),
+                                              );
+                                        }
+                                        read.resetText();
+                                      });
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor:
+                                          Theme.of(context).primaryColor,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 0,
+                                      ),
+                                    ),
+                                    child: SizedBox(
+                                      width: double.infinity,
+                                      child: Text(
+                                        'Post Review',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: Colors.white,
+                                            ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  ),
+                                )
                               ],
                             ),
                           ),

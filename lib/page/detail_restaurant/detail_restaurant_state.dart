@@ -10,4 +10,6 @@ class DetailRestaurantState {
   String? messageError = '';
   String nameText = '';
   String reviewText = '';
+
+  bool isFavorite = false;
 }

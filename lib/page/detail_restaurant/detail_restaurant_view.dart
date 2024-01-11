@@ -55,6 +55,19 @@ class _DetailRestaurantView extends StatelessWidget {
                           : Colors.white,
                     ),
                   ),
+                  actions: [
+                    IconButton(
+                      onPressed: () {
+                        read.changeFavoriteState();
+                      },
+                      icon: Icon(
+                        state.isFavorite
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ],
                   flexibleSpace: FlexibleSpaceBar(
                     background: Hero(
                       tag: id,

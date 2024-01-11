@@ -71,7 +71,7 @@ class _HomeView extends StatelessWidget {
                 ),
               ),
             ),
-            if (!state.isSearchShow)
+            if (!state.isSearchShow) ...[
               InkWell(
                 onTap: () {
                   read.isGridChanger();
@@ -83,6 +83,18 @@ class _HomeView extends StatelessWidget {
                   ),
                 ),
               ),
+              InkWell(
+                onTap: () {
+                  Navigator.pushNamed(context, MyPaths.favorite);
+                },
+                child: const Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Icon(
+                    Icons.favorite,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
         centerTitle: true,

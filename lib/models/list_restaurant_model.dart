@@ -113,6 +113,6 @@ class Restaurant {
         "description": description,
         "pictureId": pictureId,
         "city": city,
-        "rating": rating,
+        "rating": rating.toString(),
       };
 }

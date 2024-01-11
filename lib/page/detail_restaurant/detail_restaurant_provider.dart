@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_dicoding/page/detail_restaurant/detail_restaurant_state.dart';
 import 'package:restaurant_dicoding/helpers/screen_state_condition.dart';
 import 'package:restaurant_dicoding/repositories/restaurant_repository.dart';
+import 'package:restaurant_dicoding/utils/local_db.dart';
 
 class DetailRestaurantProvider extends ChangeNotifier {
   final state = DetailRestaurantState();
@@ -13,9 +14,16 @@ class DetailRestaurantProvider extends ChangeNotifier {
   Future<void> _init(String? id) async {
     if (id != null) {
       await getDetailRestaurant(id);
+      await _isFavoriteRestaurant(id);
     } else {
       state.screenState = ScreenStateCondition.error;
     }
+  }
+
+  Future<void> _isFavoriteRestaurant(String id) async {
+    final bool db = await LocalDb().getIsRestaurantFavorite(id);
+    state.isFavorite = db;
+    notifyListeners();
   }
 
   Future<void> getDetailRestaurant(String id) async {
@@ -80,6 +88,28 @@ class DetailRestaurantProvider extends ChangeNotifier {
         'message': 'id restaurant are not found',
       };
     }
+  }
+
+  void changeFavoriteState() {
+    if (state.data != null) {
+      if (state.isFavorite) {
+        _deleteFromFavoriteRestaurant();
+      } else {
+        _insertFavoriteRestaurant();
+      }
+    }
+  }
+
+  Future<void> _insertFavoriteRestaurant() async {
+    await LocalDb().insertRestaurant(state.data!);
+    state.isFavorite = true;
+    notifyListeners();
+  }
+
+  Future<void> _deleteFromFavoriteRestaurant() async {
+    await LocalDb().deleteRestaurantFromFavorite(state.data!.id!);
+    state.isFavorite = false;
+    notifyListeners();
   }
 
   void showSnackbar({

@@ -87,16 +87,8 @@ class DetailRestaurant {
         "name": name,
         "description": description,
         "city": city,
-        "address": address,
         "pictureId": pictureId,
-        "categories": categories == null
-            ? []
-            : List<dynamic>.from(categories!.map((x) => x.toJson())),
-        "menus": menus?.toJson(),
         "rating": rating,
-        "customerReviews": customerReviews == null
-            ? []
-            : List<dynamic>.from(customerReviews!.map((x) => x.toJson())),
       };
 }
 

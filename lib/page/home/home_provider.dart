@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_dicoding/helpers/screen_state_condition.dart';
+import 'package:restaurant_dicoding/navigation/my_paths.dart';
 import 'package:restaurant_dicoding/page/home/home_state.dart';
 import 'package:restaurant_dicoding/repositories/restaurant_repository.dart';
 
@@ -80,5 +81,17 @@ class HomeProvider extends ChangeNotifier {
       getListRestaurant();
     }
     notifyListeners();
+  }
+
+  void onClickPopupMenu(BuildContext context, String value) {
+    switch (value) {
+      case 'Favorite':
+        Navigator.pushNamed(context, MyPaths.favorite);
+        break;
+      case 'Setting':
+        Navigator.pushNamed(context, MyPaths.setting);
+        break;
+      default:
+    }
   }
 }

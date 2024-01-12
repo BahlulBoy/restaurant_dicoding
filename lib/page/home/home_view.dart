@@ -32,71 +32,95 @@ class _HomeView extends StatelessWidget {
           children: [
             Expanded(
               child: state.isSearchShow
-                  ? Padding(
-                      padding: const EdgeInsets.only(
-                        right: 8,
-                      ),
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          isCollapsed: true,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          hintText: 'Search',
-                          hintStyle: Theme.of(context).textTheme.titleSmall,
-                          contentPadding: const EdgeInsets.symmetric(
-                            vertical: 11,
-                            horizontal: 12,
-                          ),
+                  ? TextFormField(
+                      decoration: InputDecoration(
+                        isCollapsed: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        onChanged: (value) async {
-                          await read.getListRestaurantSearch(value);
-                        },
-                        style: Theme.of(context).textTheme.titleSmall,
+                        hintText: 'Search',
+                        hintStyle: Theme.of(context).textTheme.titleSmall,
+                        contentPadding: const EdgeInsets.symmetric(
+                          vertical: 11,
+                          horizontal: 12,
+                        ),
                       ),
+                      onChanged: (value) async {
+                        await read.getListRestaurantSearch(value);
+                      },
+                      style: Theme.of(context).textTheme.titleSmall,
                     )
                   : _title(
                       data: [],
                       context: context,
                     ),
             ),
+          ],
+        ),
+        actions: [
+          InkWell(
+            onTap: () {
+              read.showSearch();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Icon(
+                state.isSearchShow ? Icons.close : Icons.search,
+              ),
+            ),
+          ),
+          if (!state.isSearchShow) ...[
             InkWell(
               onTap: () {
-                read.showSearch();
+                read.isGridChanger();
               },
               child: Padding(
                 padding: const EdgeInsets.all(5.0),
                 child: Icon(
-                  state.isSearchShow ? Icons.close : Icons.search,
+                  state.isGrid ? Icons.grid_view_outlined : Icons.list_alt,
                 ),
               ),
             ),
-            if (!state.isSearchShow) ...[
-              InkWell(
-                onTap: () {
-                  read.isGridChanger();
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Icon(
-                    state.isGrid ? Icons.grid_view_outlined : Icons.list_alt,
-                  ),
+            PopupMenuButton(
+              surfaceTintColor: Colors.white,
+              color: Colors.white,
+              child: const Padding(
+                padding: EdgeInsets.all(5.0),
+                child: Icon(
+                  Icons.settings,
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, MyPaths.favorite);
-                },
-                child: const Padding(
-                  padding: EdgeInsets.all(5.0),
-                  child: Icon(
-                    Icons.favorite,
-                  ),
-                ),
-              ),
-            ],
+              onSelected: (value) {
+                read.onClickPopupMenu(context, value);
+              },
+              itemBuilder: (context) {
+                return {'Favorite', 'Setting'}.map(
+                  (e) {
+                    return PopupMenuItem(
+                      value: e,
+                      child: Text(
+                        e,
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                    );
+                  },
+                ).toList();
+              },
+            ),
+            // InkWell(
+            //   onTap: () {
+            //     Navigator.pushNamed(context, MyPaths.favorite);
+            //   },
+            //   child: const Padding(
+            //     padding: EdgeInsets.all(5.0),
+            //     child: Icon(
+            //       Icons.settings,
+            //     ),
+            //   ),
+            // ),
           ],
-        ),
+          const SizedBox(width: 10),
+        ],
         centerTitle: true,
       ),
       body: SafeArea(

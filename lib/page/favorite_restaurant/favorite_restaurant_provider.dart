@@ -16,9 +16,7 @@ class FavoriteRestaurantProvider extends ChangeNotifier {
   Future<void> getFavoriteRestaurantList() async {
     var result = await LocalDb().getFavoriteRestaurant();
 
-    if (result.isNotEmpty) {
-      state.data = result;
-      notifyListeners();
-    }
+    state.data = result;
+    notifyListeners();
   }
 }

@@ -22,6 +22,7 @@ class _FavoriteRestaurantView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<FavoriteRestaurantProvider>().state;
+    final read = context.read<FavoriteRestaurantProvider>();
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -40,11 +41,10 @@ class _FavoriteRestaurantView extends StatelessWidget {
             final data = state.data[index];
             return InkWell(
               onTap: () {
-                Navigator.pop(context);
                 Navigator.pushNamed(context, MyPaths.detail, arguments: {
                   'id': data.id,
                   'pic': data.pictureId,
-                });
+                }).then((value) => read.getFavoriteRestaurantList());
               },
               child: ListItemCard(data: data),
             );

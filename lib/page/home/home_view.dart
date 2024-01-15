@@ -107,17 +107,6 @@ class _HomeView extends StatelessWidget {
                 ).toList();
               },
             ),
-            // InkWell(
-            //   onTap: () {
-            //     Navigator.pushNamed(context, MyPaths.favorite);
-            //   },
-            //   child: const Padding(
-            //     padding: EdgeInsets.all(5.0),
-            //     child: Icon(
-            //       Icons.settings,
-            //     ),
-            //   ),
-            // ),
           ],
           const SizedBox(width: 10),
         ],

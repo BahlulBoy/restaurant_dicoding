@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:restaurant_dicoding/constants/api_const.dart';
 import 'package:restaurant_dicoding/models/detail_restaurant_response.dart';
 import 'package:restaurant_dicoding/models/list_restaurant_model.dart';
@@ -110,5 +111,18 @@ class RestaurantRepository {
         message: 'There is unknown problem',
       );
     }
+  }
+
+  static Future<Restaurant?> getRandomRestaurant() async {
+    final result = await getListRestaurant();
+
+    if (result.restaurants != null) {
+      if (result.restaurants!.isNotEmpty) {
+        Random random = Random();
+        int randomNumber = random.nextInt(result.restaurants!.length);
+        return result.restaurants![randomNumber];
+      }
+    }
+    return null;
   }
 }
